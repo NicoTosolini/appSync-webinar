@@ -1,0 +1,10 @@
+{
+  "auth": {
+    "appsyncwebinar967c24b8": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false
+    }
+  }
+}

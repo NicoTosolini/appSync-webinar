@@ -1,18 +1,25 @@
-import React from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import React from "react";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 import "semantic-ui-css/semantic.min.css";
-import 'react-datepicker/dist/react-datepicker.css';
+import "react-datepicker/dist/react-datepicker.css";
 
 import appSyncConfig from "./aws-exports";
 import { ApolloProvider } from "react-apollo";
-import AWSAppSyncClient, { defaultDataIdFromObject } from "aws-appsync";
+import AWSAppSyncClient, {
+  defaultDataIdFromObject,
+  AUTH_TYPE,
+} from "aws-appsync";
 import { Rehydrated } from "aws-appsync-react";
 
-import './App.css';
-import AllEvents from './Components/AllEvents';
-import NewEvent from './Components/NewEvent';
-import ViewEvent from './Components/ViewEvent';
+import "./App.css";
+import AllEvents from "./Components/AllEvents";
+import NewEvent from "./Components/NewEvent";
+import ViewEvent from "./Components/ViewEvent";
+import Amplify, { Auth } from "aws-amplify";
+import awsconfig from "./aws-exports";
+import { withAuthenticator, AmplifySignOut } from "@aws-amplify/ui-react";
 
+Amplify.configure(awsconfig);
 const Home = () => (
   <div className="ui container">
     <AllEvents />
@@ -22,6 +29,7 @@ const Home = () => (
 const App = () => (
   <Router>
     <div>
+      <AmplifySignOut />
       <Route exact={true} path="/" component={Home} />
       <Route path="/event/:id" component={ViewEvent} />
       <Route path="/newEvent" component={NewEvent} />
@@ -33,8 +41,9 @@ const client = new AWSAppSyncClient({
   url: appSyncConfig.aws_appsync_graphqlEndpoint,
   region: appSyncConfig.aws_appsync_region,
   auth: {
-    type: appSyncConfig.aws_appsync_authenticationType,
-    apiKey: appSyncConfig.aws_appsync_apiKey,
+    type: AUTH_TYPE.AMAZON_COGNITO_USER_POOLS,
+    jwtToken: async () =>
+      (await Auth.currentSession()).getIdToken().getJwtToken(),
   },
   cacheOptions: {
     dataIdFromObject: (obj) => {
@@ -43,7 +52,7 @@ const client = new AWSAppSyncClient({
       if (!id) {
         const { __typename: typename } = obj;
         switch (typename) {
-          case 'Comment':
+          case "Comment":
             return `${typename}:${obj.commentId}`;
           default:
             return id;
@@ -51,8 +60,8 @@ const client = new AWSAppSyncClient({
       }
 
       return id;
-    }
-  }
+    },
+  },
 });
 
 const WithProvider = () => (
@@ -63,4 +72,4 @@ const WithProvider = () => (
   </ApolloProvider>
 );
 
-export default WithProvider;
+export default withAuthenticator(WithProvider);
