@@ -49,7 +49,7 @@ class NewComment extends Component {
                 <div className="field">
                     <textarea value={comment.content} onChange={this.handleChange} disabled={loading}></textarea>
                 </div>
-                <button className={`ui blue labeled submit icon button ${loading ? 'loading' : ''}`}
+                <button className={`ui green labeled submit icon button ${loading ? 'loading' : ''}`}
                     disabled={loading} onClick={this.handleSubmit}>
                     <i className="icon edit"></i>
                     Add Comment

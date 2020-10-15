@@ -73,16 +73,16 @@ class AllEvents extends Component {
             <div>
                 <div className="ui clearing basic segment">
                     <h1 className="ui header left floated">All Events</h1>
-                    <button className="ui icon left basic button" onClick={this.handleSync} disabled={busy}>
+                    <button className="ui green icon left basic button" onClick={this.handleSync} disabled={busy}>
                         <i aria-hidden="true" className={`refresh icon ${busy && "loading"}`}></i>
                         Sync with Server
                     </button>
                 </div>
                 <div className="ui link cards">
-                    <div className="card blue">
+                    <div className="card green">
                         <Link to="/newEvent" className="new-event content center aligned">
-                            <i className="icon add massive"></i>
-                            <p>Create new event</p>
+                            <i className="icon add green massive"></i>
+                            <a class="ui green basic label">Create new event</a>
                         </Link>
                     </div>
                     {[].concat(events).sort((a, b) => a.when.localeCompare(b.when)).map(this.renderEvent)}
